@@ -1,0 +1,98 @@
+type Application {
+  id: String!
+}
+
+type Lease {
+  id: Int
+}
+
+type Payments {
+  id: Int
+}
+
+type Policy {
+  createdDate: Float!
+  updatedDate: Float!
+  listingAlias: String!
+  isActive: Boolean!
+  policyStatus: String!
+  applicationId: Application!
+  leaseId: Lease!
+  paymentId: Payments
+  policyId: String!
+  leaseTermStartDate: Date
+  leaseTermEndDate: Date
+  policyTermStartDate: Date
+  policyTermEndDate: Date
+  landlordUserToken: String
+  renterIds: [String]
+}
+
+type Policies {
+  policies: [Policy]!
+  totalResults: Int!
+}
+
+type HistoryType {
+  idType: String!
+  idValue: String!
+  action: String!
+  createdDate: Float!
+  userToken: String!
+  message: String
+}
+
+type History {
+  logs: [HistoryType]!
+}
+
+type PolicySearchType {
+  value: String!
+  displayName: String!
+}
+
+type PolicySearchTypes {
+  values: [PolicySearchType!]!
+}
+
+type PolicyStatus {
+  value: String!
+  displayName: String!
+}
+
+type PolicyStatuses {
+  values: [PolicyStatus!]!
+}
+
+enum LogIdType {
+  listingAlias
+  userToken
+}
+
+enum SortBy {
+  createdDate
+  updatedDate
+  policyStartDate
+  policyEndDate
+}
+
+enum SortDir {
+  asc
+  desc
+}
+
+type Query {
+  searchPolicies(
+    searchType: String!
+    searchValue: String!
+    pageSize: Int!
+    fromIndex: Int!
+    sortBy: SortBy
+    sortDir: SortDir
+  ): Policies
+  history(logIdType: LogIdType!, logIdValue: String!): History
+  policySearchTypes: PolicySearchTypes
+  policyStatuses: PolicyStatuses
+}
+
+scalar Date

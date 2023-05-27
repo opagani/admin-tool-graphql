@@ -1,0 +1,204 @@
+type Lease {
+  id: Int
+  monthlyRentUsd: Int
+  startDate: Date
+  endDate: Date
+  securityDeposit: Int
+}
+
+type Payments {
+  id: Int
+  termType: String
+  firstExpectedPaymentDate: LocalDateType
+  finalExpectedPaymentDate: LocalDateType
+  firstSuccessfulPaymentDate: LocalDateType
+  mostRecentSuccessfulPaymentDate: LocalDateType
+  rentTermsCancelledDate: LocalDateType
+  daysDelinquent: Int
+}
+
+type LocalDateType {
+  year: Int
+  month: Int
+  day: Int
+}
+
+type TimeType {
+  hour: Int
+  minute: Int
+  second: Int
+  nano: Int
+}
+
+type LocalDateTimeType {
+  date: LocalDateType
+  time: TimeType
+}
+
+enum PremiumPaidBy {
+  PASSTHROUGH
+  DIRECT
+}
+
+enum PaymentChargeStatus {
+  FAILED
+  OTHER
+  PENDING
+  REFUNDED
+  DISPUTED
+  SUCCEEDED
+  UNKNOWN
+}
+
+enum PaymentPayoutStatus {
+  PAID
+  PENDING
+  IN_TRANSIT
+  CANCELED
+  FAILED
+  UNKNOWN
+}
+
+type Property {
+  listingAlias: String!
+  street: String!
+  unit: String
+  city: String!
+  state: String!
+  zip: String!
+}
+
+type Landlord {
+  id: String
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+}
+
+type ApplicationEligibility {
+  applicationId: String
+  applicationEligibilityStatus: String
+}
+
+type Renter {
+  renterId: String
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+  creditCheckEligibleFlag: Boolean
+  incomeToRentEligibleFlag: Boolean
+}
+
+type LeaseLockBinder {
+  id: String!
+  issueDate: LocalDateType!
+  effectiveDate: LocalDateType
+  expirationDate: LocalDateType
+  cancelDate: LocalDateType
+  binderStatus: String!
+}
+
+type LeaseLockCertificate {
+  id: String!
+  issueDate: LocalDateType!
+  effectiveDate: LocalDateType
+  expirationDate: LocalDateType
+  cancelDate: LocalDateType
+  certificateStatus: String!
+}
+
+type Quote {
+  quoteId: Float!
+  premium: Float
+  coverage: Float
+  firstMonthStampingFee: Float
+  firstMonthSurplusLines: Float
+  firstMonthTotal: Float
+  recurringMonthSurplusLines: Float
+  recurringMonthTotal: Float
+}
+
+type PremiumTransaction {
+  transactionId: String
+  transactionType: PremiumPaidBy
+  premiumAmountInCents: Float
+  transactionCreatedDate: LocalDateType
+  transactionUpdatedDate: LocalDateType
+  chargeId: String
+  chargeStatus: PaymentChargeStatus
+  chargeDate: LocalDateTimeType
+  payoutStatus: PaymentPayoutStatus
+  formattedChargeDate(delimiter: String, includeTime: Boolean = true): String
+  formattedTransactionCreatedDate(delimiter: String): String
+  formattedTransactionUpdatedDate(delimiter: String): String
+}
+
+type PolicyDetails {
+  policyId: String!
+  property: Property
+  lease: Lease
+  payments: Payments
+  landlords: [Landlord!]!
+  applicationEligibility: ApplicationEligibility!
+  renters: [Renter!]!
+  leaseLockBinder: LeaseLockBinder
+  leaseLockCertificate: LeaseLockCertificate
+  quote: Quote
+  premiumTransactions: [PremiumTransaction]
+  policyStatus: String
+  isCancellable: Boolean!
+  isEligibleToReinstate: Boolean!
+  monthlyPremiumPayments: [MonthlyPremiumPayments]
+}
+
+type HistoryForPolicyRelatedActionsType {
+  policyId: String!
+  action: String!
+  createdDate: Float!
+  message: String!
+  source: String!
+  sourceId: String!
+}
+
+type MonthlyPremiumPayments {
+  sequenceNumber: Int!
+  invoiceDate: String!
+  totalDueAmount: Float!
+  premiumAmount: Float!
+  stampingFeeAmount: Float
+  surplusLinesTaxAmount: Float
+}
+
+type HistoryForPolicyRelatedActions {
+  logs: [HistoryForPolicyRelatedActionsType]!
+}
+
+type CancelPolicyResponse {
+  success: Boolean!
+  httpStatus: Int!
+  error: ErrorResponse
+}
+
+type ReinstateDroppedPolicyResponse {
+  success: Boolean!
+  httpStatus: Int!
+  error: ErrorResponse
+}
+
+type ErrorResponse {
+  message: String
+}
+
+type Query {
+  expandedPolicyDetails(policyId: String!): PolicyDetails
+  historyForPolicyRelatedActions(policyId: String!): HistoryForPolicyRelatedActions
+}
+
+type Mutation {
+  cancelPolicy(policyId: String!, caseNumber: String!, note: String!): CancelPolicyResponse
+  reinstateDroppedPolicy(policyId: String!, caseNumber: String!, note: String!): ReinstateDroppedPolicyResponse
+}
+
+scalar Date

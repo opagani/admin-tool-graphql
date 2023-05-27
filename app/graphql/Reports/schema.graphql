@@ -1,0 +1,94 @@
+type MethodParamsDetails {
+  paramName: String!
+  paramDataType: String!
+  paramDefaultValue: Int!
+}
+
+type Report {
+  reportName: String!
+  reportDescription: String!
+  methodToInvoke: String!
+  methodParamsDetails: [MethodParamsDetails]
+}
+
+type Reports {
+  reportsDetails: [Report!]!
+}
+
+type RentGuaranteeLandLord {
+  landlordUserToken: String!
+  firstName: String
+  lastName: String
+  emails: [String]
+  phones: [String]
+}
+
+type RentGuaranteeLandLordObject {
+  landlord: RentGuaranteeLandLord
+}
+
+type Landlords {
+  rentGuaranteeLandlords: [RentGuaranteeLandLordObject!]!
+}
+
+union UserActivities = UserActivity | ListingActivity | ApplicationActivity | VoucherActivity
+
+type Activities {
+  userActivities: [UserActivities!]
+}
+
+interface UserActionActivity {
+  idType: String!
+  idValue: String!
+  action: String!
+  createdDate: Float!
+  userToken: String!
+  message: String
+}
+
+type UserActivity implements UserActionActivity {
+  idType: String!
+  idValue: String!
+  action: String!
+  createdDate: Float!
+  userToken: String!
+  message: String
+}
+
+type ListingActivity implements UserActionActivity {
+  idType: String!
+  idValue: String!
+  action: String!
+  createdDate: Float!
+  userToken: String!
+  message: String
+}
+
+type ApplicationActivity {
+  applicationId: String!
+  incomeToRentEligible: Boolean!
+  incomeUpdatedDate: Float!
+  listingAlias: String!
+  createdDate: Float!
+  userToken: String!
+}
+
+type VoucherActivity {
+  applicationId: String!
+  voucherToRentCoverage: String!
+  listingAlias: String!
+  createdDate: Float!
+  updatedDate: Float!
+  userToken: String!
+}
+
+input UrlParams {
+  name: String!
+  value: String
+}
+
+type Query {
+  reports(reportType: String): Reports
+  landlordsDataForReports(methodToInvoke: String!, urlParams: String): Landlords
+  userActivityDataForReports(methodToInvoke: String!, urlParams: [UrlParams!]): Activities
+}

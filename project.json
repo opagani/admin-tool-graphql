@@ -1,0 +1,31 @@
+{
+  "name": "@zg-rentals/rent-guarantee-graphql",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./rjs test apps/rent-guarantee-graphql"
+      }
+    },
+    "build": {
+      "inputs": ["default", { "env": "BUILD_NUMBER" }, { "env": "ZG_ENV" }],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./rjs ws run rent-guarantee-graphql build"
+      }
+    },
+    "tsc": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./rjs tsc -w rent-guarantee-graphql"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./rjs lint apps/rent-guarantee-graphql --quiet"
+      }
+    }
+  }
+}
